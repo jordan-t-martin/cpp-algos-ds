@@ -16,6 +16,19 @@ void bubble_sort(int arr[], int size) {
                 swap(arr[j], arr[j+1]);
 }
 
+// Takes the minimum value on each pass and adds to sorted partition
+// Needs to make as many passes as there are elements
+void selection_sort(int arr[], int size) {
+    int i, j, min;
+    for(i = 0; i < size - 1; i++){
+        min = i;
+        for(j = i+1; j < size; j++)
+            if(arr[j] < arr[min])
+                min = j;
+        swap(arr[min], arr[i]);
+    }
+}
+
 int main(void) {
     int arr1[] = {4, 1, 3, 9, 7};
     int arr2[] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
@@ -23,7 +36,7 @@ int main(void) {
     int size2 = sizeof(arr2) / sizeof(arr2[0]);
     
     bubble_sort(arr1, size1);
-    bubble_sort(arr2, size2);
+    selection_sort(arr2, size2);
 
     printf("Sorted array:\n\t");
     int i;
