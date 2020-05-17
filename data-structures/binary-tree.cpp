@@ -1,4 +1,5 @@
 #include <iostream>
+#define SPACE_COUNT 5
 
 struct node
 {
@@ -19,7 +20,7 @@ class btree
         void destroy_tree();
 
     private:
-        void print_tree(node* leaf);
+        void print_tree(node* leaf, int space);
         void destroy_tree(node *leaf);
         void insert(int key, node *leaf);
         node *search(int key, node *leaf);
@@ -47,7 +48,7 @@ void btree::insert(int key) {
 
 node* btree::search(int key) { return search(key, root); }
 
-void btree::print_tree() { print_tree(root); }
+void btree::print_tree() { print_tree(root, 0); }
 
 void btree::destroy_tree() { destroy_tree(root); }
 
@@ -82,19 +83,29 @@ node* btree::search(int key, node *leaf) {
         // Found key
         if(key == leaf->value) { return leaf; }
         // Call recursively on left and right nodes
-        else if(key < leaf->value) { search(key, leaf->left); }
+        if(key < leaf->value) { search(key, leaf->left); }
         else if(key > leaf->value) { search(key, leaf->right); }
-        // Did not find key
-        return NULL;
     }
+    // Did not find key from traversal
+    else return NULL;
 }
 
-// Recursively traverse tree and delete nodes
-void btree::print_tree(node* leaf) {
+// 2D print of binary tree, passes space amount to each level of recursion
+void btree::print_tree(node* leaf, int space) {
     if(leaf != NULL) {
-        print_tree(leaf->left);
-        print_tree(leaf->right);
-        std::cout << leaf->value << " ";
+        // Space increase for each new level
+        space += SPACE_COUNT;
+        // Call recursively on right node
+        print_tree(leaf->right, space);
+
+        // Print node with space adjustment
+        std::cout<<std::endl;  
+        for (int i = SPACE_COUNT; i < space; i++)  
+            std::cout<<" ";  
+        std::cout<<leaf->value<<"\n";
+
+        // Call recursively on left node
+        print_tree(leaf->left, space);
     }
 }
 
@@ -109,6 +120,7 @@ void btree::destroy_tree(node* leaf) {
 
 int main() {
     btree a;
+    std::cout << "Inserting 1, 2, 3, 4, 10, 8, 7, 100 ..." << std::endl;
     a.insert(1);
     a.insert(2);
     a.insert(3);
@@ -117,5 +129,26 @@ int main() {
     a.insert(8);
     a.insert(7);
     a.insert(100);
+    // Print example
+    std::cout << "Printing 2D tree..." << std::endl;
     a.print_tree();
+    std::cout << std::endl;
+    
+    // Search example
+    node *search;
+    std::cout << "Searching for 77..." << std::endl;
+    search = a.search(77);
+    if(search == NULL)
+        std::cout << "Search returned NULL." << std::endl;
+    else
+        std::cout << "Search returned " << search->value << "." << std::endl;
+
+    std::cout << "Searching for 10..." << std::endl;
+    search = a.search(10);
+        if(search == NULL)
+        std::cout << "Search returned NULL." << std::endl;
+    else
+        std::cout << "Search returned " << search->value << "." << std::endl;
+
+    a.destroy_tree();
 }
